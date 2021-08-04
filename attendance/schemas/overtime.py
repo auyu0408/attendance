@@ -7,10 +7,11 @@ class OvertimeCreate(BaseModel):
     start: datetime.time
     end: datetime.time
     reason: str
-    check: bool
 
 class Overtime(OvertimeCreate):
     id: int
+    check: bool
+    user_id: int
 
     class Config:
         orm_mode = True

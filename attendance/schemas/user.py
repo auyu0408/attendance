@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 import datetime
 
 class UserBase(BaseModel):
@@ -6,6 +7,10 @@ class UserBase(BaseModel):
 
 class UserLogin(UserBase):
     passwd: str
+
+class UserPasswd(BaseModel):
+    origin: str
+    new: str
 
 class UserCreate(UserLogin):
     name: str
@@ -15,7 +20,6 @@ class UserCreate(UserLogin):
     hr: bool
     on_job: datetime.date
     off_job: datetime.date
-    status: int
 
 class User(UserBase):
     id: int
@@ -25,8 +29,8 @@ class User(UserBase):
     manager: bool
     hr: bool
     on_job: datetime.date
-    off_job: datetime.date
-    status: int
+    off_job: Optional[datetime.date]
+    status: int = 1
 
     class Config:
         orm_mode = True

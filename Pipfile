@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
+passlib = "*"
+async-exit-stack = "*"
+async-generator = "*"
 
 [dev-packages]
 

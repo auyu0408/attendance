@@ -1,13 +1,15 @@
 from pydantic import BaseModel
 import datetime
 
-class DailyCreate(BaseModel):
-    day: datetime.date
-    on: datetime.time
-    off:datetime.time
+class DailyUpdate(BaseModel):
     on_fix: datetime.time
     off_fix: datetime.time
     fix_note: str
+
+class DailyCreate(DailyUpdate):
+    day: datetime.date
+    on: datetime.time
+    off:datetime.time
 
 class Daily(DailyCreate):
     id: int

@@ -1,25 +1,18 @@
-from fastapi import FastAPI, Query, Path
+from fastapi import FastAPI, HTTPException, status
+from . import models
+from .database import SessionLocal, engine
+import crud
+
+models.Base.metadata.create_all(bind= engine)
 
 app = FastAPI()
 
-@app.get("/user ")
-async def user(
-    *,
-    user_id: int = Query(..., title="The id of the user to get", gt=0)
-):
-    return {'user_id':user_id}
+#Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@app.get("/leave/{leave_id}")
-async def user(
-    *,
-    leave_id: int = Path(..., title="the id of the user to get", gt=0)
-):
-    return {'leave_id':leave_id}
-
-@app.post('/user/{user_id}')
-async def update_user(
-    *,
-    user_id: int, 
-    really_update: int = Query(...)
-):
-    pass
+#@app.get("/users/")
