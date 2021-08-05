@@ -26,11 +26,11 @@ class User(UserBase):
     name: str
     email: str
     department: str
-    manager: bool
-    hr: bool
+    manager: bool = False
+    hr: bool = False
     on_job: datetime.date
     off_job: Optional[datetime.date]
-    status: int = 1
+    status: int = 0
 
     class Config:
         orm_mode = True

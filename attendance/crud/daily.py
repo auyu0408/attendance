@@ -1,5 +1,5 @@
-from salalchemy.orm import Session
-from . import models, schemas
+from sqlalchemy.orm import Session
+from attendance import models, schemas
 
 def get_daily(db:Session, id: int):
     return db.query(models.Leave).filter(models.Leave.id == id).first()

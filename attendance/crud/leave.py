@@ -1,5 +1,5 @@
-from salalchemy.orm import Session
-from . import models, schemas
+from sqlalchemy.orm import Session
+from attendance import models, schemas
 
 #self
 def delete_leave(db:Session, leave_id: int):

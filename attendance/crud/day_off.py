@@ -1,5 +1,5 @@
-from salalchemy.orm import Session
-from . import models, schemas
+from sqlalchemy.orm import Session
+from attendance import models, schemas
 #hr
 def get_dayoff(db:Session, date_id: int):
     return db.query(models.DayOff).filter(models.DayOff.id == date_id).first()

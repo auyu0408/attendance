@@ -1,24 +1,26 @@
-from attendance.models.user import User
-from salalchemy.orm import Session
-from . import models, schemas
+from sqlalchemy.orm import Session
+from attendance import models, schemas
 from passlib.context import CryptContext
 import datetime 
 
 #hash passwd
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def authenticate_user(db:Session, Login: schemas.UserLogin):
+def authenticate_user(db:Session, account: str, passwd:str):
     try:
-        user = db.query(models.User).filter(models.User.account == Login).first()
+        user = db.query(models.User).filter(models.User.account == account).first()
     except:
         return "Wrong account"
-    if pwd_context.verify(Login.passwd, user.passwd):
-        return User
+    if pwd_context.verify(passwd, user.passwd):
+        return user
     else:
         return "Wrong password."    
 
 def get_user(db:Session, user_id: int):
     return db.query(models.User).filter(models.User.id==user_id).first()
+
+def get_user_account(db:Session, user_account: str):
+    return db.query(models.User).filter(models.User.account==user_account).first()
 
 def update_passwd(db:Session, passwd: schemas.UserPasswd, user_id: int):
     try:
@@ -50,27 +52,33 @@ def create_user(db:Session, user:schemas.UserCreate):
     return db_user
 
 def delete_user(db:Session, user_id: int):
-    db_user = db.query(models.User).get(models.User.id==user_id)
-    db_user.update({
-        "status": 2,
-        "off_job": datetime.date.today()
-        })
-    db.commit()
+    db_user = db.query(models.User).filter(models.User.id==user_id).first()
+    if db_user is None:
+        pass
+    else:
+        db_user.update({
+            "status": 2,
+            "off_job": datetime.date.today()
+            })
+        db.commit()
     return db_user
 
 def update_user(db:Session, user: schemas.User):
-    db_user = db.query(models.User).get(models.User.id == user.id)
-    db_user.update({
-        "name": user.name,
-        "account": user.account,
-        "email": user.email,
-        "department": user.department,
-        "manager": user.manager,
-        "hr": user.hr,
-        "on_job": user.on_job,
-        "off_job": user.off_job,
-        "status": user.status,
-    })
-    db.commit()
-    db.refresh(db_user)
+    db_user = db.query(models.User).filter(models.User.id == user.id).first()
+    if db_user is None:
+        pass
+    else:
+        db_user.update({
+            "name": user.name,
+            "account": user.account,
+            "email": user.email,
+            "department": user.department,
+            "manager": user.manager,
+            "hr": user.hr,
+            "on_job": user.on_job,
+            "off_job": user.off_job,
+            "status": user.status,
+        })
+        db.commit()
+        db.refresh(db_user)
     return db_user

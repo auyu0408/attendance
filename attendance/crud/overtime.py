@@ -1,6 +1,6 @@
 from attendance.schemas import user
-from salalchemy.orm import Session
-from . import models, schemas
+from sqlalchemy.orm import Session
+from attendance import models, schemas
 
 #self
 def create_overtime(db:Session, Overtime: schemas.OvertimeCreate, user_id: int):

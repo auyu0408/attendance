@@ -1,5 +1,3 @@
-from attendance.models import overtime
-from attendance.schemas.salary import Salary
 from sqlalchemy import Boolean, Column, Integer, String, Date
 from sqlalchemy.orm import relationship
 import datetime
@@ -21,7 +19,7 @@ class User(Base):
     off_job = Column(Date)
     status = Column(Integer, default=0)
 
-    salarys = relationship("Salary", back_populates="users")
+    base_salarys = relationship("BaseSalary", back_populates="users")
     leaves = relationship("Leave", back_populates="users")
     overtimes = relationship("Overtime", back_populates="users")
     dailys = relationship("Daily", back_populates="users")

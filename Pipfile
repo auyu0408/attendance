@@ -9,6 +9,8 @@ uvicorn = "*"
 passlib = "*"
 async-exit-stack = "*"
 async-generator = "*"
+sqlalchemy = "*"
+python-multipart = "*"
 
 [dev-packages]
 
