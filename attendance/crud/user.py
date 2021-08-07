@@ -1,6 +1,4 @@
-from attendance.models.user import User
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.functions import mode
 from attendance import models, schemas
 from passlib.context import CryptContext
 from fastapi import HTTPException
@@ -46,7 +44,9 @@ def update_passwd(db:Session, passwd: schemas.UserPasswd, user_id: int):
         raise HTTPException(status_code=400, detail="Wrong password.")
 
 #hr
-def get_users(db: Session, skip: int=0, limit: int=100):
+def get_users(db: Session, current: models.User, skip: int=0, limit: int=100):
+    if not current.hr:
+        raise HTTPException(status_code=401, detail="You are not hr.")
     return db.query(models.User).offset(skip).limit(limit).all()
 
 def create_user(db:Session, user:schemas.UserCreate, current: models.User):

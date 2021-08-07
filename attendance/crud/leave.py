@@ -40,7 +40,7 @@ def get_leave(db:Session, leave_id: int, current: models.User):
     leave = db.query(models.Leave).filter(models.Leave.id == leave_id).first()
     if not leave:
         raise HTTPException(status_code=404, detail="not found.")
-    if leave.user_id != current.id or current.hr:
+    if leave.user_id != current.id and not current.hr:
         raise HTTPException(status_code=401, detail="Wrong user.")
     return leave
 

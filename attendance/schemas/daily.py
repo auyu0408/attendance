@@ -9,7 +9,7 @@ class DailyUpdate(BaseModel):
 class DailyCreate(DailyUpdate):
     day: datetime.date
     on: datetime.time
-    off:datetime.time
+    off: datetime.time
 
 class Daily(DailyCreate):
     id: int
