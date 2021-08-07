@@ -1,5 +1,3 @@
-from attendance.models.daily import Daily
-from attendance.crud.daily import all_daily
 from typing import List
 from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session

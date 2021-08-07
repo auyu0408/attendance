@@ -18,7 +18,7 @@ I separated attendance-system and use fastAPI to write backend
   ```
   pipenv run uvicorn attendance.main:app --reload
   ```  
-  - The server will run at [http://127.0.0.1:8000/docs#/](http://127.0.0.1:8000/docs#/)  
+  - Back end docs will run at [http://127.0.0.1:8000/docs#/](http://127.0.0.1:8000/docs#/)  
 
   3. Stop service  
   ```
@@ -28,3 +28,13 @@ I separated attendance-system and use fastAPI to write backend
   ```
   make clean
   ```  
+
+### First time use:
+
+You need to click `post /get_admin` to get an admin.  
+admin account and password:
+```
+name: admin
+account: admin
+password: admin
+```
