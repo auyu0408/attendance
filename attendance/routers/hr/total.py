@@ -20,9 +20,9 @@ def total(year: int, month: int, db: Session=Depends(get_db), current: models.Us
     else:
         n_month = month+1
         n_year = year
-    db_leaves = db.query(models.Leave).filter(models.Leave.start>=datetime.datetime(year=year, month=month, day=1), models.Leave.end<datetime.datetime(year=n_year, month=n_month, day=1))
-    db_overtimes = db.query(models.Overtime).filter(models.Overtime.day>=datetime.datetime(year=year, month=month, day=1), models.Overtime.day<datetime.datetime(year=n_year, month=n_month, day=1))
-    db_dailys = db.query(models.Daily).filter(models.Daily.day>=datetime.datetime(year=year, month=month, day=1), models.Daily.day<datetime.datetime(year=n_year, month=n_month, day=1))
-    db_dayoffs = db.query(models.DayOff).filter(models.DayOff.day>=datetime.datetime(year=year, month=month, day=1), models.DayOff.day<datetime.datetime(year=n_year, month=n_month, day=1))
+    db_leaves = db.query(models.Leave).filter(models.Leave.start>=datetime.datetime(year=year, month=month, day=1), models.Leave.end<datetime.datetime(year=n_year, month=n_month, day=1)).all()
+    db_overtimes = db.query(models.Overtime).filter(models.Overtime.day>=datetime.datetime(year=year, month=month, day=1), models.Overtime.day<datetime.datetime(year=n_year, month=n_month, day=1)).all()
+    db_dailys = db.query(models.Daily).filter(models.Daily.day>=datetime.datetime(year=year, month=month, day=1), models.Daily.day<datetime.datetime(year=n_year, month=n_month, day=1)).all()
+    db_dayoffs = db.query(models.DayOff).filter(models.DayOff.day>=datetime.datetime(year=year, month=month, day=1), models.DayOff.day<datetime.datetime(year=n_year, month=n_month, day=1)).all()
     result = {"users": db_users, "leaves": db_leaves, "overtimes": db_overtimes, "dailys": db_dailys, "dayoffs": db_dayoffs}
     return result

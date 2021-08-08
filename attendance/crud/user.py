@@ -53,7 +53,7 @@ def create_user(db:Session, user:schemas.UserCreate, current: models.User):
     if not current.hr:
         raise HTTPException(status_code=401, detail="Your are not hr.")
     hash_passwd = pwd_context.hash(user.passwd)
-    already_user = get_user_account(db, user_account=user.account)
+    already_user = db.query(models.User).filter(models.User.account==user.account).first()
     if already_user:
         raise HTTPException(status_code=400, detail="Account already exist.")
     db_user = models.User(name=user.name, account=user.account, email=user.email, passwd=hash_passwd,

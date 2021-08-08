@@ -8,7 +8,7 @@ def get_dailys(db:Session, user_id: int):
 
 #utility
 def update_daily(db:Session, daily: schemas.DailyUpdate, daily_id: int, current: models.User):
-    db_daily = db.query(models.Daily).get(models.Daily.id == daily_id)
+    db_daily = db.query(models.Daily).filter(models.Daily.id == daily_id).first()
     if db_daily.user_id != current.id and not current.hr:
         raise HTTPException(status_code=401, detail="Wrong User.")
     db_daily.on_fix= daily.on 
@@ -19,7 +19,7 @@ def update_daily(db:Session, daily: schemas.DailyUpdate, daily_id: int, current:
     return db_daily
 
 def get_daily(db:Session, id: int, current: models.User):
-    db_daily = db.query(models.Leave).filter(models.Leave.id == id).first()
+    db_daily = db.query(models.Daily).filter(models.Daily.id == id).first()
     if not db_daily:
         raise HTTPException(status_code=404, detail="Daily not found.")
     if db_daily.user_id != current.id and not current.hr:

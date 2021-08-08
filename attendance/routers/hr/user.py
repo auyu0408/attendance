@@ -25,7 +25,7 @@ def read_user(id: int, db: Session = Depends(get_db), current_user: User=Depends
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.create_user(db, user=user, current=current_user)
 
-@router.put("/users/{id}", response_model = schemas.User, status_code=200)
+@router.put("/users", response_model = schemas.User, status_code=200)
 def update_user(user: schemas.User, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.update_user(db, user=user, current=current_user)
 

@@ -5,3 +5,6 @@ init: clean
 
 clean:
 	find . -name '*.db' -exec rm -f {} \;
+
+test: clean
+	pipenv run pytest -s

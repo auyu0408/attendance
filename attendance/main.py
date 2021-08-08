@@ -15,17 +15,22 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = FastAPI()
 
-@app.post("/get_admin", status_code=204)
+@app.post("/get_init_user")
 def admin(db: Session=Depends(get_db)):
-    db_admin = db.query(models.User).filter(models.User.name=="admin").first()
-    hash_passwd = pwd_context.hash("admin")
+    db_admin = db.query(models.User).first()
     if not db_admin:
+        hash_passwd = pwd_context.hash("admin")
         db_admin = models.User(name="admin", account="admin", email="admin@gmail.com", passwd=hash_passwd,
             department = "admin", manager = True, hr = True, on_job = datetime.date.today(), off_job=datetime.date.today()
             , status=0)
-    db.add(db_admin)
-    db.commit()
-    return Response(status_code=204)
+        db.add(db_admin)
+        db.commit()
+        return Response(status_code=201)
+    else: return Response(status_code=204)
+
+
+def get_form():
+    return {"username": "admin", "password": "admin"}
 
 #Dependency
 @app.post("/token")

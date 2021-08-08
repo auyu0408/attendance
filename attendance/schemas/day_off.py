@@ -3,7 +3,7 @@ import datetime
 
 class DayOffCreate(BaseModel):
     day: datetime.date
-    type: str
+    type: int
 
 class DayOff(DayOffCreate):
     id: int

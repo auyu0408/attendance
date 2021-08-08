@@ -5,7 +5,7 @@ import datetime
 from attendance.database import Base
 
 class BaseSalary(Base):
-    __tablename__ = 'salarys'
+    __tablename__ = 'base_salarys'
 
     id = Column(Integer, primary_key=True, index= True)
     user_id = Column(Integer, ForeignKey('users.id'))

@@ -6,8 +6,8 @@ from fastapi import HTTPException
 def get_base_salarys(db:Session, user_id: int, current: models.User):
     if not current.hr:
         raise HTTPException(status_code=401, detail="You are not hr.")
-    return db.query(models.BaseSalary).filter(models.BaseSalary.user_id== user_id)
-
+    db_salary = db.query(models.BaseSalary).filter(models.BaseSalary.user_id==user_id).all()
+    return db_salary
 
 #hr
 def create_base_salary(db:Session, base_salary: schemas.BaseSalaryCreate, current: models.User):
@@ -18,4 +18,4 @@ def create_base_salary(db:Session, base_salary: schemas.BaseSalaryCreate, curren
     db.add(db_salary)
     db.commit()
     db.refresh(db_salary)
-    return db_salary
+    return get_base_salarys(db, user_id=base_salary.user_id, current=current)

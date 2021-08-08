@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 import datetime
 
 class UserBase(BaseModel):
@@ -29,7 +28,7 @@ class User(UserBase):
     manager: bool = False
     hr: bool = False
     on_job: datetime.date
-    off_job: Optional[datetime.date]
+    off_job: datetime.date
     status: int = 0
 
     class Config:
