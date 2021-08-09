@@ -12,8 +12,8 @@ def create_overtime(db:Session, Overtime: schemas.OvertimeCreate, user_id: int):
     db.refresh(db_overtime)
     return db_overtime
 
-def update_overtime(db:Session, Overtime: schemas.Overtime, current: models.User):
-    db_overtime = db.query(models.Overtime).filter(models.Overtime.id == Overtime.id).first()
+def update_overtime(db:Session, Overtime: schemas.OvertimeCreate, current: models.User, id: int):
+    db_overtime = db.query(models.Overtime).filter(models.Overtime.id == id).first()
     if not db_overtime:
         raise HTTPException(status_code=404, detail="Overtime not found.")
     if current.id != db_overtime.user_id:

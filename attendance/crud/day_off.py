@@ -20,6 +20,9 @@ def all_dayoff(db:Session, current: models.User, skip: int=0, limit: int=100):
 def create_dayoff(db:Session, date:schemas.DayOffCreate, current: models.User):
     if not current.hr:
         raise HTTPException(status_code=401, detail="You are not hr.")
+    dayoff = db.query(models.DayOff).filter(models.DayOff.day == date.day).first()
+    if dayoff:
+        raise HTTPException(status_code=400, detail="Reapeat day.")
     db_dayoff = models.DayOff(day = date.day, type = date.type)
     db.add(db_dayoff)
     db.commit()

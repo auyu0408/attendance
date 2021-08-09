@@ -22,12 +22,12 @@ def read_overtime(id: int, db: Session=Depends(get_db), current_user: User=Depen
     return crud.get_overtime(db, id=id, current=current_user)
 
 @router.post("/overtime", response_model=schemas.Overtime, status_code=201)
-def add_overtime(overtime_form: schemas.LeaveCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
+def add_overtime(overtime_form: schemas.OvertimeCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.create_overtime(db, Overtime=overtime_form, user_id=current_user.id)
 
-@router.put("/leave", response_model=schemas.Leave, status_code=200)
-def update_overtime(overtime_from: schemas.LeaveCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.update_leave(db, Overtime=overtime_from, current=current_user)
+@router.put("/leave/{id}", response_model=schemas.Overtime, status_code=200)
+def update_overtime(overtime_from: schemas.OvertimeCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
+    return crud.update_leave(db, Overtime=overtime_from, current=current_user, id=id)
 
 #manager
 @router.get("/check_leave", response_model=List[schemas.Leave], status_code=200)

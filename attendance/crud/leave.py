@@ -1,3 +1,4 @@
+from attendance.schemas.leave import LeaveCreate
 from sqlalchemy.orm import Session
 from attendance import database, models, schemas
 from fastapi import HTTPException
@@ -15,14 +16,14 @@ def delete_leave(db:Session, leave_id: int, current: models.User):
 
 def create_leave(db:Session, Leave: schemas.LeaveCreate, user_id: int):
     db_leave = models.Leave(start= Leave.start, end= Leave.end, category= Leave.category,
-                        reason= Leave.str, check= False, user_id = user_id)
+                        reason= Leave.reason, check= False, user_id = user_id)
     db.add(db_leave)
     db.commit()
     db.refresh(db_leave)
     return db_leave
 
-def update_leave(db:Session, Leave: schemas.LeaveCreate, current: models.User):
-    db_leave = db.query(models.Leave).filter(models.Leave.id == Leave.id).first()
+def update_leave(db:Session, Leave: schemas.LeaveCreate, current: models.User, id: int):
+    db_leave = db.query(models.Leave).filter(models.Leave.id == id).first()
     if not db_leave:
         raise HTTPException(status_code=404, detail="not_found")
     if db_leave.user_id != current.id:
