@@ -22,27 +22,102 @@ hr = {"accept": "application/json", "Authorization": "Bearer hr1", "Content-Type
 hr_manager = {"accept": "application/json", "Authorization": "Bearer hrmanager1", "Content-Type": "application/json"}
 boss = {"accept": "application/json", "Authorization": "Bearer boss1", "Content-Type": "application/json"}
 
-def test_create_overtime_success():
+def test_create_overtime_officer():
     overtime = {
-        'day': '2021-08-10',
-        'start': '17:00',
-        'end': '19:00',
+        'day': '2021-08-07',
+        'start': '13:00',
+        'end': '17:00',
         'reason': '處理私事',
         }
     overtime_json = json.dumps(overtime)
-    response = client.post("/leave", data=overtime_json, headers=officer)
+    response = client.post("/overtime", data=overtime_json, headers=officer)
     print(response.json())
     assert response.status_code == 201
 
-def test_create_overtime_failed():
+def test_create_overtime_manager():
     overtime = {
-        'start': '2021-08-01T08:00:23.535Z',
-        'end': '2021-08-01T17:00:23.535Z',
-        'category': '事假',
-        'reason': '處理私事',
-        'check': False
+        'day': '2021-07-28',
+        'start': '17:30',
+        'end': '19:00',
+        'reason': '廠協會開會',
         }
     overtime_json = json.dumps(overtime)
-    response = client.post("/leave", data=overtime_json, headers=officer)
+    response = client.post("/overtime", data=overtime_json, headers=manager)
     print(response.json())
     assert response.status_code == 201
+
+def test_create_overtime_hr():
+    overtime = {
+        'day': '2021-08-10',
+        'start': '17:30',
+        'end': '19:00',
+        'reason': '廠協會開會',
+        }
+    overtime_json = json.dumps(overtime)
+    response = client.post("/overtime", data=overtime_json, headers=hr)
+    print(response.json())
+    assert response.status_code == 201
+
+def test_create_overtime_hr_manager():
+    overtime = {
+        'day': '2021-08-06',
+        'start': '17:30',
+        'end': '19:30',
+        'reason': '薪資核對',
+        }
+    overtime_json = json.dumps(overtime)
+    response = client.post("/overtime", data=overtime_json, headers=hr)
+    print(response.json())
+    assert response.status_code == 201
+
+def test_create_overtime_boss():
+    overtime = {
+        'day': '2021-08-07',
+        'start': '8:00',
+        'end': '12:00',
+        'reason': '廠商驗貨',
+        }
+    overtime_json = json.dumps(overtime)
+    response = client.post("/overtime", data=overtime_json, headers=boss)
+    print(response.json())
+    assert response.status_code == 201
+
+def test_create_overtime_wrongtime():
+    overtime = {
+        'day': '2021-08-08',
+        'start': '17:00',
+        'end': '19:00',
+        'reason': '他就會錯',
+        }
+    overtime_json = json.dumps(overtime)
+    response = client.post("/overtime", data=overtime_json, headers=officer)
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Wrong start time."
+    }
+
+def test_create_overtime_wrongtime2():
+    overtime = {
+        'start': '2021-08-02T17:00:23.535Z',
+        'end': '2021-08-02T19:00:23.535Z',
+        'reason': '我就爛',
+        }
+    overtime_json = json.dumps(overtime)
+    response = client.post("/overtime", data=overtime_json, headers=officer)
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Wrong start time."
+    }
+
+def test_create_overtime_wrongtime3():
+    overtime = {
+        'start': '2021-08-02T13:00:23.535Z',
+        'end': '2021-08-02T08:00:23.535Z',
+        'reason': '他也要錯',
+        }
+    overtime_json = json.dumps(overtime)
+    response = client.post("/overtime", data=overtime_json, headers=officer)
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Wrong time."
+    }

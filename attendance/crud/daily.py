@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.functions import mode
 from fastapi import HTTPException
 from attendance import models, schemas
 
@@ -35,6 +36,11 @@ def all_daily(db:Session, current: models.User, skip: int=0, limit: int=100):
 def create_daily(db:Session, daily: schemas.DailyCreate, current: models.User):
     if not current.hr:
         raise HTTPException(status_code=401, detail="You are not hr.")
+    user = db.query(models.User).filter(models.User.id==daily.user_id).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="User_id not found.")
+    if daily.on > daily.off:
+        raise HTTPException(status_code=400, detail="Wrong time")
     db_daily = models.Daily(day=daily.day, on=daily.on, off=daily.off, on_fix=daily.on, 
                     off_fix=daily.off, fix_note=daily.fix_note)
     db.add(db_daily)

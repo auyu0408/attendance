@@ -16,10 +16,6 @@ async def override_dependency(form_data: OAuth2PasswordRequestForm= Depends(), d
 app.dependency_overrides[login] = override_dependency
 header = {"accept": "application/json", "Authorization": "Bearer admin"}
 
-def test_get_init_user():
-    response = client.post("/get_init_user")
-    assert response.status_code == 201 or response.status_code == 204
-
 def test_profile():
     response = client.get("/hr/users", headers=header)
     assert response.status_code == 200

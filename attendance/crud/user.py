@@ -8,7 +8,7 @@ import datetime
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def authenticate_user(db:Session, account: str, passwd:str):
-    user = db.query(models.User).filter(models.User.account == account).first()
+    user = db.query(models.User).filter(models.User.account == account, models.User.status==0).first()
     if not user:
         raise HTTPException(status_code=404, detail="Incorrect user account")
     if pwd_context.verify(passwd, user.passwd):
@@ -25,9 +25,9 @@ def get_user(db:Session, user_id: int, current: models.User):
     return db_user
 
 def get_user_account(db:Session, user_account: str):
-    db_user = db.query(models.User).filter(models.User.account==user_account).first()
+    db_user = db.query(models.User).filter(models.User.account==user_account, models.User.status==0).first()
     if not db_user:
-        raise HTTPException(status_code=401, detail="Invalid authentication credentials",
+        raise HTTPException(status_code=401, detail="Can't find User or User is resigned.",
             headers={"WWW-Authenticate": "Bearer"},)
     return db_user
 

@@ -13,7 +13,7 @@ router = APIRouter()
 
 #LEAVE
 #self
-@router.get("/leave", response_model=List[schemas.Leave], status_code=200)
+@router.get("/leave", status_code=200)
 def leave_list(db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_leaves(db, user_id=current_user.id)
 
@@ -21,11 +21,11 @@ def leave_list(db: Session = Depends(get_db), current_user: User=Depends(get_cur
 def read_leave(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_leave(db, leave_id=id, current=current_user)
 
-@router.post("/leave", response_model=schemas.Leave, status_code=201)
+@router.post("/leave", status_code=201)
 def add_leave(leave_form: schemas.LeaveCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.create_leave(db, Leave=leave_form, user_id=current_user.id)
 
-@router.put("/leave/{id}", response_model=schemas.Leave, status_code=200)
+@router.put("/leave/{id}", status_code=200)
 def update_leave(id:int, leave_from: schemas.LeaveCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.update_leave(db, Leave=leave_from, current=current_user, id=id)
 

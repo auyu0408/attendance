@@ -1,18 +1,46 @@
+from datetime import datetime
 from attendance.schemas import user
 from sqlalchemy.orm import Session
 from attendance import dependency, models, schemas
 from fastapi import HTTPException
+import datetime
 
 #self
-def create_overtime(db:Session, Overtime: schemas.OvertimeCreate, user_id: int):
+def create_overtime(db:Session, Overtime: schemas.OvertimeCreate, current: models.User):
+    dayoff = db.query(models.DayOff).filter(models.DayOff.day == Overtime.day).first()
+    if dayoff:
+        if Overtime.start == datetime.time(8,0) or Overtime.start == datetime.time(13,0):
+            pass
+        else:
+            raise HTTPException(status_code=400, detail="Wrong start time.")
+    else:
+        if Overtime.start == datetime.time(17,30):
+            pass
+        else:
+            raise HTTPException(status_code=400, detail="Wrong start time.")
+    if Overtime.start > Overtime.end:
+        raise HTTPException(status_code=400, detail="Wrong time.")
     db_overtime = models.Overtime(day= Overtime.day, start= Overtime.start, end= Overtime.end, 
-                        reason= Overtime.str, check= False, user_id = user_id)
+                        reason= Overtime.reason, check= False, user_id = current.id)
     db.add(db_overtime)
     db.commit()
     db.refresh(db_overtime)
     return db_overtime
 
 def update_overtime(db:Session, Overtime: schemas.OvertimeCreate, current: models.User, id: int):
+    dayoff = db.query(models.DayOff).filter(models.DayOff.day == Overtime.day).first()
+    if dayoff:
+        if Overtime.start == datetime.time(8,0) or Overtime.start == datetime.time(13,0):
+            pass
+        else:
+            raise HTTPException(status_code=400, detail="Wrong start time.")
+    else:
+        if Overtime.start == datetime.time(17,30):
+            pass
+        else:
+            raise HTTPException(status_code=400, detail="Wrong start time.")
+    if Overtime.start > Overtime.end:
+        raise HTTPException(status_code=400, detail="Wrong time.")
     db_overtime = db.query(models.Overtime).filter(models.Overtime.id == id).first()
     if not db_overtime:
         raise HTTPException(status_code=404, detail="Overtime not found.")

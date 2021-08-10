@@ -11,8 +11,15 @@ def get_base_salarys(db:Session, user_id: int, current: models.User):
 
 #hr
 def create_base_salary(db:Session, base_salary: schemas.BaseSalaryCreate, current: models.User):
+    if base_salary.salary <= 0:
+        raise HTTPException(status_code=400, detail="Wrong salary.")
+    if base_salary.self_percent > 6 or base_salary.self_percent < 0:
+        raise HTTPException(status_code=400, detail="Wrong self percent.")
     if not current.hr:
         raise HTTPException(status_code=401, detail="You are not hr.")
+    user = db.query(models.User).filter_by(models.User.id==base_salary.user_id, models.User.status==0).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found or resigned.")
     db_salary = models.BaseSalary(salary=base_salary.salary, user_id= base_salary.user_id, date= base_salary.date,
                 self_percent= base_salary.self_percent)
     db.add(db_salary)

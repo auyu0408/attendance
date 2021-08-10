@@ -19,19 +19,38 @@ app.dependency_overrides[login] = override_dependency
 admin = {"accept": "application/json", "Authorization": "Bearer admin", "Content-Type": "application/json"}
 officer = {"accept": "application/json", "Authorization": "Bearer officer1", "Content-Type": "application/json"}
 
-def test_dayoff_success():
+def test_dayoff_0():
     dayoff = {
         'day': '2021-08-01',
         'type': 7
     }
     dayoff_json = json.dumps(dayoff)
-    response = client.post("/hr/day_off", data=dayoff_json, headers=admin)
+    response = client.post("/hr/day_off", data=dayoff_json, headers=admin
+    )
     assert response.status_code == 201
 
-def test_dayoff_create():
+def test_dayoff_1():
     dayoff = {
         'day': '2021-07-31',
         'type': 6
+    }
+    dayoff_json = json.dumps(dayoff)
+    response = client.post("/hr/day_off", data=dayoff_json, headers=admin)
+    assert response.status_code == 201
+
+def test_dayoff_2():
+    dayoff = {
+        'day': '2021-08-07',
+        'type': 6
+    }
+    dayoff_json = json.dumps(dayoff)
+    response = client.post("/hr/day_off", data=dayoff_json, headers=admin)
+    assert response.status_code == 201
+
+def test_dayoff_3():
+    dayoff = {
+        'day': '2021-08-08',
+        'type': 7
     }
     dayoff_json = json.dumps(dayoff)
     response = client.post("/hr/day_off", data=dayoff_json, headers=admin)
@@ -58,7 +77,7 @@ def test_dayoff_staff():
         "detail": "You are not hr."
     }
 
-def test_dayoff_repeated():
+def test_dayoff_conflict():
     dayoff = {
         'day': '2021-07-31',
         'type': 6

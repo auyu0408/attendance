@@ -14,17 +14,22 @@ I separated attendance-system and use fastAPI to write backend
   ```
   make init
   ```  
-  2. Start the service  
+  - then, press `Ctrl+C`.
+  2. Setup admin
+  ```
+  make setup
+  ```
+  3. Start the service  
   ```
   pipenv run uvicorn attendance.main:app --reload
   ```  
   - Back end docs will run at [http://127.0.0.1:8000/docs#/](http://127.0.0.1:8000/docs#/)  
 
-  3. Stop service  
+  4. Stop service  
   ```
   Ctrl+c
   ```  
-  4. Delete Database  
+  5. Delete Database  
   ```
   make clean
   ```  
