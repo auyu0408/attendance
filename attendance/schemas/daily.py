@@ -7,6 +7,7 @@ class DailyUpdate(BaseModel):
     fix_note: str
 
 class DailyCreate(DailyUpdate):
+    user_id: int
     day: datetime.date
     on: datetime.time
     off: datetime.time

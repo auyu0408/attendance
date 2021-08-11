@@ -6,6 +6,6 @@ from attendance.database import Base
 class DayOff(Base):
     __tablename__ = "day_offs"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
     day = Column(Date, default= datetime.date.today)
     type = Column(Integer, default=6)

@@ -11,6 +11,8 @@ async-exit-stack = "*"
 async-generator = "*"
 sqlalchemy = "*"
 python-multipart = "*"
+python-jose = "*"
+alembic = "*"
 
 [dev-packages]
 

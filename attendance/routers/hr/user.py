@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, Response
 from sqlalchemy.orm import Session
 
 from attendance.database import get_db
@@ -13,22 +13,23 @@ router = APIRouter()
 
 #USER
 #hr
-@router.get("/hr/users/", response_model=List[schemas.User], status_code=200)
+@router.get("/users", response_model=List[schemas.User], status_code=200)
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.get_users(db, skip=skip, limit=limit)
+    return crud.get_users(db, current=current_user, skip=skip, limit=limit)
 
-@router.get("/hr/users/{id}", response_model = schemas.User, status_code=200)
+@router.get("/users/{id}", response_model = schemas.User, status_code=200)
 def read_user(id: int, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_user(db, user_id=id, current=current_user)
 
-@router.post("/hr/users/", response_model = schemas.User, status_code=201)
+@router.post("/users", response_model = schemas.User, status_code=201)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.create_user(db, user=user, current=current_user)
 
-@router.put("/hr/users/{id}", response_model = schemas.User, status_code=200)
-def update_user(user: schemas.User, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.update_user(db, user=user, current=current_user)
+@router.put("/users/{id}", response_model = schemas.User, status_code=200)
+def update_user(id:int, user: schemas.UserUpdate, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
+    return crud.update_user(db, user=user, current=current_user, id=id)
 
-@router.delete("/hr/users/{id}", response_model = schemas.User, status_code=200)
+@router.delete("/users/{id}", status_code=204)
 def delete_user(id: int, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.delete_user(db, user_id=id, current=current_user)
+    crud.delete_user(db, user_id=id, current=current_user)
+    return Response(status_code=204)

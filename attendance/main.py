@@ -11,6 +11,7 @@ from attendance.routers import user, leave, overtime, daily, hr
 models.Base.metadata.create_all(bind= engine)
 
 app = FastAPI()
+
 #Dependency
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm= Depends(), db:Session=Depends(get_db)):
@@ -29,3 +30,4 @@ app.include_router(hr.leave.router, prefix="/hr")
 app.include_router(hr.overtime.router, prefix="/hr")
 app.include_router(hr.daily.router, prefix="/hr")
 app.include_router(hr.day_off.router, prefix="/hr")
+app.include_router(hr.total.router, prefix="/hr")
