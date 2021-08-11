@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, Response
 from sqlalchemy.orm import Session
 
 from attendance.database import get_db
@@ -25,10 +25,11 @@ def read_user(id: int, db: Session = Depends(get_db), current_user: User=Depends
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.create_user(db, user=user, current=current_user)
 
-@router.put("/users", response_model = schemas.User, status_code=200)
-def update_user(user: schemas.User, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.update_user(db, user=user, current=current_user)
+@router.put("/users/{id}", response_model = schemas.User, status_code=200)
+def update_user(id:int, user: schemas.UserUpdate, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
+    return crud.update_user(db, user=user, current=current_user, id=id)
 
-@router.delete("/users/{id}", response_model = schemas.User, status_code=200)
+@router.delete("/users/{id}", status_code=204)
 def delete_user(id: int, db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.delete_user(db, user_id=id, current=current_user)
+    crud.delete_user(db, user_id=id, current=current_user)
+    return Response(status_code=204)

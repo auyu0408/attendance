@@ -1,12 +1,11 @@
 from datetime import datetime
-from attendance.schemas import user
 from sqlalchemy.orm import Session
-from attendance import dependency, models, schemas
+from attendance import models, schemas
 from fastapi import HTTPException
 import datetime
 
 #self
-def create_overtime(db:Session, Overtime: schemas.OvertimeCreate, current: models.User):
+def create_overtime(db:Session, Overtime: schemas.OvertimeCreate, user_id: int):
     dayoff = db.query(models.DayOff).filter(models.DayOff.day == Overtime.day).first()
     if dayoff:
         if Overtime.start == datetime.time(8,0) or Overtime.start == datetime.time(13,0):
@@ -21,7 +20,7 @@ def create_overtime(db:Session, Overtime: schemas.OvertimeCreate, current: model
     if Overtime.start > Overtime.end:
         raise HTTPException(status_code=400, detail="Wrong time.")
     db_overtime = models.Overtime(day= Overtime.day, start= Overtime.start, end= Overtime.end, 
-                        reason= Overtime.reason, check= False, user_id = current.id)
+                        reason= Overtime.reason, check= False, user_id = user_id)
     db.add(db_overtime)
     db.commit()
     db.refresh(db_overtime)

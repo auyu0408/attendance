@@ -1,43 +1,57 @@
-# attendance back end  
-I separated attendance-system and use fastAPI to write backend
+# Attendance back end  
 
-## Set up  
+I separated attendance-system and use fastAPI to write back end.
 
-### Prerequisites  
+## Prerequisites  
 
 - Python 3.8  
 - pipenv(Python Module)  
 
+## Set up
+
 ### Environment Setup  
 
-  1. initialize python environment  
-  ```
-  make init
-  ```  
-  - then, press `Ctrl+C`.
-  2. Setup admin
-  ```
-  make setup
-  ```
-  3. Start the service  
-  ```
-  pipenv run uvicorn attendance.main:app --reload
-  ```  
-  - Back end docs will run at [http://127.0.0.1:8000/docs#/](http://127.0.0.1:8000/docs#/)  
+1. initialize python environment  
 
-  4. Stop service  
-  ```
-  Ctrl+c
-  ```  
-  5. Delete Database  
-  ```
-  make clean
-  ```  
+```lan=bash  
+make init
+```
+  
+2. Start the service  
 
-### First time use:
+```lan=bash
+make start
+pipenv run uvicorn attendance.main:app --reload
+```  
+  
+- Back end docs will run at [http://127.0.0.1:8000/docs#/](http://127.0.0.1:8000/docs#/)  
 
-You need to click `post /get_admin` to get an admin.  
-admin account and password:
+3. Stop service  
+
+```
+Ctrl+c
+```  
+  
+4. Delete Database  
+
+```lan=bash
+make clean
+```  
+
+## Development  
+
+### testing  
+
+Using `pytest` in fastapi.  
+
+```lan=bash
+make test
+```
+
+## First time to use  
+
+- We already set an admin account when we do `make init` it, there is the info.
+
 ```
 name: admin
 account: admin

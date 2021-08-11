@@ -1,5 +1,11 @@
 from pydantic import BaseModel
 import datetime
+from enum import Enum
+
+class StatusType(int, Enum):
+    ON_JOB = 0
+    UNPAID = 1
+    OFF_JOB = 2
 
 class UserBase(BaseModel):
     account: str
@@ -20,16 +26,17 @@ class UserCreate(UserLogin):
     on_job: datetime.date
     off_job: datetime.date
 
-class User(UserBase):
-    id: int
+class UserUpdate(UserBase):
     name: str
     email: str
     department: str
-    manager: bool = False
-    hr: bool = False
+    manager: bool
+    hr: bool
     on_job: datetime.date
-    off_job: datetime.date
-    status: int = 0
+    status: StatusType = StatusType.ON_JOB
 
+class User(UserUpdate):
+    id: int
+    off_job: datetime.date
     class Config:
         orm_mode = True

@@ -18,7 +18,7 @@ app.dependency_overrides[login] = override_dependency
 header = {"accept": "application/json", "Authorization": "Bearer admin", "Content-Type": "application/json"}
 header_staff = {"accept": "application/json", "Authorization": "Bearer officer1", "Content-Type": "application/json"}
 
-def test_create_staff_success():
+def test_create_user_success():
     user = {
         'account': 'officer1',
         'passwd': 'officer1',
@@ -43,13 +43,12 @@ def test_create_staff():
         'department': '這個會失敗',
         'manager': False,
         'hr': False,
-        'on_job': '2000-07-18',
+        'on_job': '2001-08-10',
         'off_job': '2021-08-08'
         }
     user_json = json.dumps(user)
     response = client.post("/hr/users", data=user_json, headers=header_staff)
     assert response.status_code == 401
-    print(response.json())
     assert response.json() == {
         "detail": "Your are not hr."
     }
@@ -70,7 +69,7 @@ def test_create_staff_conflict():
     response = client.post("/hr/users", data=user_json, headers=header)
     assert response.status_code == 400
     assert response.json() == {
-        "detail": "Account already exist."
+        "detail": "Account is conflict."
     }
 
 def test_create_manager():
@@ -134,6 +133,23 @@ def test_create_boss():
         'manager': True,
         'hr': True,
         'on_job': '1999-07-17',
+        'off_job': '2021-08-08'
+        }
+    user_json = json.dumps(user)
+    response = client.post("/hr/users", data=user_json, headers=header)
+    assert response.status_code == 201
+    print(response.json())
+
+def test_create_officer2():
+    user = {
+        'account': 'officer2',
+        'passwd': 'officer2',
+        'name': 'nakiri ayame',
+        'email': 'docchidocchi@gmail.com',
+        'department': 'Boss',
+        'manager': False,
+        'hr': False,
+        'on_job': '2018-09-03',
         'off_job': '2021-08-08'
         }
     user_json = json.dumps(user)

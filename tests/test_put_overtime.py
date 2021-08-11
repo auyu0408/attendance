@@ -22,104 +22,84 @@ hr = {"accept": "application/json", "Authorization": "Bearer hr1", "Content-Type
 hr_manager = {"accept": "application/json", "Authorization": "Bearer hrmanager1", "Content-Type": "application/json"}
 boss = {"accept": "application/json", "Authorization": "Bearer boss1", "Content-Type": "application/json"}
 
-def test_create_overtime_officer():
+def test_put_overtime_officer():
     overtime = {
         'day': '2021-08-07',
         'start': '13:00',
         'end': '17:00',
-        'reason': '處理私事'
+        'reason': '加班時間並不會處理私事'
         }
     overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=officer)
+    response = client.put("/overtime/1", data=overtime_json, headers=officer)
     print(response.json())
-    assert response.status_code == 201
+    assert response.status_code == 200
 
-def test_create_overtime_manager():
-    overtime = {
-        'day': '2021-07-28',
-        'start': '17:30',
-        'end': '19:00',
-        'reason': '廠協會開會'
-        }
-    overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=manager)
-    print(response.json())
-    assert response.status_code == 201
-
-def test_create_overtime_hr():
-    overtime = {
-        'day': '2021-08-10',
-        'start': '17:30',
-        'end': '19:00',
-        'reason': '廠協會開會'
-        }
-    overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=hr)
-    print(response.json())
-    assert response.status_code == 201
-
-def test_create_overtime_hr_manager():
-    overtime = {
-        'day': '2021-07-06',
-        'start': '17:30',
-        'end': '19:30',
-        'reason': '薪資核對'
-        }
-    overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=hr)
-    print(response.json())
-    assert response.status_code == 201
-
-def test_create_overtime_boss():
+def test_put_overtime_wronguser():
     overtime = {
         'day': '2021-08-07',
-        'start': '8:00',
-        'end': '12:00',
-        'reason': '廠商驗貨'
+        'start': '13:00',
+        'end': '17:00',
+        'reason': '假日被迫工程掠地'
         }
     overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=boss)
-    print(response.json())
-    assert response.status_code == 201
+    response = client.put("/overtime/1", data=overtime_json, headers=manager)
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Wrong User."
+    }
 
-def test_create_overtime_wrongtime():
+def test_put_overtime_wrongtime():
     overtime = {
         'day': '2021-08-08',
         'start': '17:00',
         'end': '19:00',
-        'reason': '他就會錯'
+        'reason': '錯誤的開始'
         }
     overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=officer)
+    response = client.put("/overtime/1", data=overtime_json, headers=officer)
     assert response.status_code == 400
     assert response.json() == {
         "detail": "Wrong start time."
     }
 
-def test_create_overtime_wrongtime2():
+def test_put_overtime_wrongtime2():
     overtime = {
         'day': '2021-08-02',
         'start': '17:00',
         'end': '19:00',
-        'reason': '我就爛',
+        'reason': 'P.H.'
         }
     overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=officer)
+    response = client.put("/overtime/1", data=overtime_json, headers=officer)
     assert response.status_code == 400
     assert response.json() == {
         "detail": "Wrong start time."
     }
 
-def test_create_overtime_wrongtime3():
+def test_put_overtime_wrongtime3():
     overtime = {
         'day': '2021-08-01',
         'start': '13:00',
         'end': '08:00',
-        'reason': '他也要錯',
+        'reason': '圓周率之花'
         }
     overtime_json = json.dumps(overtime)
-    response = client.post("/overtime", data=overtime_json, headers=officer)
+    response = client.put("/overtime/3", data=overtime_json, headers=hr)
     assert response.status_code == 400
     assert response.json() == {
         "detail": "Wrong time."
+    }
+
+def test_put_overtime_notfound():
+    overtime = {
+        'day': '2021-08-01',
+        'start': '13:00',
+        'end': '17:00',
+        'reason': '圓周率之花'
+        }
+    overtime_json = json.dumps(overtime)
+    response = client.put("/overtime/20", data=overtime_json, headers=hr)
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "Overtime not found."
     }

@@ -14,23 +14,23 @@ async def override_dependency(form_data: OAuth2PasswordRequestForm= Depends(), d
     return {"access_token": user_dict.account, "token_type": "bearer"}
 
 app.dependency_overrides[login] = override_dependency
-header = { "accept": "*/*", "Authorization": "Bearer officer1", "Content-Type": "application/json"}
+admin = {"accept": "application/json", "Authorization": "Bearer admin", "Content-Type": "application/json"}
+officer = {"accept": "application/json", "Authorization": "Bearer officer1", "Content-Type": "application/json"}
 
-def test_passwd_success():
-    passwd = {
-        "origin": "officer1",
-        "new": "meowmeowmeow"
-    }
-    response = client.put("/password", json=passwd, headers=header)
+def test_delete_staff_success():
+    response = client.delete("/hr/users/7", headers=admin)
     assert response.status_code == 204
 
-def test_passwd_failed():
-    passwd = {
-        "origin": "patten",
-        "new": "rushia_boing_boing"
-    }
-    response = client.put("/password", headers=header, json=passwd)
-    assert response.status_code == 400
+def test_delete_staff_staff():
+    response = client.delete("/hr/users/3", headers=officer)
+    assert response.status_code == 401
     assert response.json() == {
-        "detail": "Wrong password."
+        "detail": "Your are not hr."
+    }
+
+def test_delete_staff_notfound():
+    response = client.delete("/hr/users/15", headers=admin)
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "User not found."
     }

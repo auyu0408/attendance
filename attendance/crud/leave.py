@@ -44,13 +44,15 @@ def update_leave(db:Session, Leave: schemas.LeaveCreate, current: models.User, i
     dayoff = db.query(models.DayOff).filter(models.DayOff.day.in_([s_day, e_day])).first()
     if dayoff:
         raise HTTPException(status_code=400, detail="start and end shouldn't at the day of Day Off.")
+    if s_day > e_day:
+        raise HTTPException(status_code=400, detail="Wrong day.")
     if s_time > datetime.time(17,0) or e_time > datetime.time(17,0):
         raise HTTPException(status_code=400, detail="start and end can't after 17:00")
-    if s_time < datetime.time(17,0) or e_time < datetime.time(17,0):
+    if s_time < datetime.time(8,0) or e_time < datetime.time(8,0):
         raise HTTPException(status_code=400, detail="start and end can't before 8:00")
     db_leave = db.query(models.Leave).filter(models.Leave.id == id).first()
     if not db_leave:
-        raise HTTPException(status_code=404, detail="not_found")
+        raise HTTPException(status_code=404, detail="Leave not found")
     if db_leave.user_id != current.id:
         raise HTTPException(status_code=401, detail="Wrong User.")
     db_leave.start= Leave.start
@@ -59,6 +61,7 @@ def update_leave(db:Session, Leave: schemas.LeaveCreate, current: models.User, i
     db_leave.reason= Leave.reason
     db_leave.check= False
     db.commit()
+    db.refresh(db_leave)
     return db_leave
 
 #utility
