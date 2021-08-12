@@ -56,6 +56,15 @@ def test_dayoff_3():
     response = client.post("/hr/day_off", data=dayoff_json, headers=admin)
     assert response.status_code == 201
 
+def test_dayoff_deletable():
+    dayoff = {
+        'day': '2021-08-15',
+        'type': 7
+    }
+    dayoff_json = json.dumps(dayoff)
+    response = client.post("/hr/day_off", data=dayoff_json, headers=admin)
+    assert response.status_code == 201
+
 def test_dayoff_failed():
     dayoff = {
         'day': '2021-07-00',

@@ -24,4 +24,4 @@ def add_daily(daily_form: schemas.DailyCreate, db: Session=Depends(get_db), curr
 
 @router.put("/daily/{id}", status_code=200)
 def update_daily(id: int, daily_form: schemas.DailyUpdate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.update_daily(db, daily=daily_form, daily_id=id, current=current_user)
+    return crud.update_daily(db, daily=daily_form, id=id, current=current_user)

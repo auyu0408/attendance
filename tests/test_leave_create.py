@@ -22,7 +22,7 @@ hr = {"accept": "application/json", "Authorization": "Bearer hr1", "Content-Type
 hr_manager = {"accept": "application/json", "Authorization": "Bearer hrmanager1", "Content-Type": "application/json"}
 boss = {"accept": "application/json", "Authorization": "Bearer boss1", "Content-Type": "application/json"}
 
-def test_create_leave_success():
+def test_create_leave_officer():
     leave = {
         'start': '2021-08-02T13:00:23.535Z',
         'end': '2021-08-02T17:00:23.535Z',
@@ -76,6 +76,17 @@ def test_create_leave_boss():
         }
     leave_json = json.dumps(leave)
     response = client.post("/leave", data=leave_json, headers=boss)
+    assert response.status_code == 201
+
+def test_create_leave_deletable():
+    leave = {
+        'start': '2021-08-05T08:00:23.535Z',
+        'end': '2021-08-05T17:00:23.535Z',
+        'category': '事假',
+        'reason': '處理私事'
+        }
+    leave_json = json.dumps(leave)
+    response = client.post("/leave", data=leave_json, headers=officer)
     assert response.status_code == 201
 
 def test_create_leave_failed():

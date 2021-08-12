@@ -30,10 +30,14 @@ def update_overtime(id: int, overtime_from: schemas.OvertimeCreate, db: Session=
     return crud.update_overtime(db, Overtime=overtime_from, current=current_user, id=id)
 
 #manager
-@router.get("/check_leave", response_model=List[schemas.Leave], status_code=200)
+@router.get("/check_overtime", response_model=List[schemas.Leave], status_code=200)
 def check_overtime_list(db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_other_overtimes(db, current=current_user)
 
-@router.put("/check_leave/{id}", response_model=schemas.Leave, status_code=200)
+@router.get("/check_overtime/{id}", response_model=List[schemas.Leave], status_code=200)
+def check_overtime_read(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
+    return crud.get_overtime_manager(db, current=current_user, id=id)
+
+@router.put("/check_overtime/{id}", response_model=schemas.Leave, status_code=200)
 def check_overtime(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.check_overtime(db, overtime_id=id, current=current_user)

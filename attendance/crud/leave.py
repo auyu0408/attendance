@@ -1,7 +1,6 @@
-from attendance.schemas.leave import LeaveCreate
 from sqlalchemy.orm import Session
-from attendance import database, models, schemas
-from fastapi import HTTPException
+from attendance import models, schemas
+from fastapi import HTTPException, Response
 import datetime
 
 #self
@@ -13,7 +12,7 @@ def delete_leave(db:Session, leave_id: int, current: models.User):
         raise HTTPException(status_code=401, detail="Wrong user.")
     db.delete(db_leave)
     db.commit
-    return get_leaves(db, user_id=current.id)
+    return Response(status_code=204)
 
 def create_leave(db:Session, Leave: schemas.LeaveCreate, user_id: int):
     s_day = datetime.date(Leave.start.year, Leave.start.month, Leave.start.day)
@@ -64,12 +63,11 @@ def update_leave(db:Session, Leave: schemas.LeaveCreate, current: models.User, i
     db.refresh(db_leave)
     return db_leave
 
-#utility
 def get_leave(db:Session, leave_id: int, current: models.User):
     leave = db.query(models.Leave).filter(models.Leave.id == leave_id).first()
     if not leave:
         raise HTTPException(status_code=404, detail="not found.")
-    if leave.user_id != current.id and not current.hr:
+    if leave.user_id != current.id:
         raise HTTPException(status_code=401, detail="Wrong user.")
     return leave
 
@@ -85,6 +83,23 @@ def get_other_leaves(db:Session, current: models.User, skip:int=0, limit: int=10
     else:
         return db.query(models.Leave).offset(skip).limit(limit).filter(models.Leave.user_id.department==current.department)
 
+def get_leave_manager(db:Session, id: int, current: models.User):
+    if not current.manager:
+        raise HTTPException(status_code=401, detail="You are not a manager.")
+    db_leave = db.query(models.Leave).filter(models.Leave.id == id).first()
+    if not db_leave:
+        raise HTTPException(status_code=404, detail="Leave not found.")
+    db_user = db.query(models.User).filter(models.User.id == db_leave.user_id)
+    if db_user.department != current.department:
+        if current.department == "Boss" and db_user.manager == True:
+            pass
+        else: 
+            raise HTTPException(status_code=401, detail="Different department.")
+    else:
+        if db_user.department != "Boss" and db_user.manager == True:
+            raise HTTPException(status_code=401, detail="You can't check the leave by yourselves.")
+    return db_leave
+
 def check_leave(db:Session, leave_id: int, current: models.User):
     if not current.manager:
         raise HTTPException(status_code=401, detail="You are not a manager.")
@@ -93,15 +108,48 @@ def check_leave(db:Session, leave_id: int, current: models.User):
         raise HTTPException(status_code=404, detail="Leave not found.")
     db_user = db.query(models.User).filter(models.User.id==db_leave.user_id).first()
     if db_user.department != current.department:
-        raise HTTPException(status_code=403, detail="Different Department.")
-    if db_user.manager and current.department != "Boss":
-        raise HTTPException(status_code=403, detail="Not enough limit.")
+        if current.department == "Boss" and db_user.manager == True:
+            pass
+        else:
+            raise HTTPException(status_code=403, detail="Different Department.")
+    else:
+        if db_user.department != "Boss" and db_user.manager == True:
+            raise HTTPException(status_code=401, detail="You can't check the leave by yourselves.")
     db_leave.check=True
     db.commit()
     return db_leave
+
+def get_leave_manager(db:Session, leave_id: int, current: models.User):
+    if not current.manager:
+        raise HTTPException(status_code=401, detail="You are not a manager.")
+    leave = db.query(models.Leave).filter(models.Leave.id == leave_id).first()
+    if not leave:
+        raise HTTPException(status_code=404, detail="Leave not found.")
+    user = db.query(models.User).filter(models.User.id==leave.user_id).first()
+    if user.department == current.department:
+        if user.department == "Boss":
+            pass
+        elif not user.manager:
+            pass
+        else:
+            raise HTTPException(status_code=401, detail="You can't check yourselves leave.")
+    else:
+        if user.manager:
+            pass
+        else:
+            raise HTTPException(status_code=401, detail="Different department.")
+    return leave
 
 #hr
 def all_leave(db:Session, current: models.User, skip: int=0, limit: int=100):
     if not current.hr:
         raise HTTPException(status_code=401, detail="You are not hr.")
     return db.query(models.Leave).offset(skip).limit(limit).filter(models.Leave.check==True)
+
+def get_leave_hr(db:Session, leave_id: int, current: models.User):
+    if not current.hr:
+        raise HTTPException(status_code=401, detail="You are not hr")
+    leave = db.query(models.Leave).filter(models.Leave.id == leave_id, models.Leave.check == True).first()
+    if not leave:
+        raise HTTPException(status_code=404, detail="not found.")
+    return leave

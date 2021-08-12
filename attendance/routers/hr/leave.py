@@ -13,7 +13,7 @@ router = APIRouter()
 #hr
 @router.get("/leave/{id}", response_model=schemas.Leave, status_code=200)
 def hr_leave(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.get_leave(db, leave_id=id, current=current_user)
+    return crud.get_leave_hr(db, leave_id=id, current=current_user)
 
 @router.get("/leave", response_model= List[schemas.Leave], status_code=200)
 def hr_all_leave( db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):

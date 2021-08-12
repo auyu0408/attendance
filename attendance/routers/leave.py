@@ -29,7 +29,7 @@ def add_leave(leave_form: schemas.LeaveCreate, db: Session=Depends(get_db), curr
 def update_leave(id:int, leave_from: schemas.LeaveCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.update_leave(db, Leave=leave_from, current=current_user, id=id)
 
-@router.delete("/leave/{id}", response_model=schemas.Leave, status_code=200)
+@router.delete("/leave/{id}", status_code=204)
 def delete_leave(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.delete_leave(db, leave_id=id, current=current_user)
 
@@ -37,6 +37,10 @@ def delete_leave(id: int, db: Session=Depends(get_db), current_user: User=Depend
 @router.get("/check_leave", response_model=List[schemas.Leave], status_code=200)
 def check_leave_list(db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_other_leaves(db, current=current_user)
+
+@router.get("/check_leave/{id}", response_model=List[schemas.Leave], status_code=200)
+def check_leave_read(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
+    return crud.get_leave_manager(db, current=current_user)
 
 @router.put("/check_leave/{id}", response_model=schemas.Leave, status_code=200)
 def check_leave(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):

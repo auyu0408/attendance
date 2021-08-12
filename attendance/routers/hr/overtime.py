@@ -13,7 +13,7 @@ router = APIRouter()
 #hr
 @router.get("/overtime/{id}", response_model=schemas.Leave, status_code=200)
 def hr_overtime(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.get_overtime(db, id=id, current=current_user)
+    return crud.get_overtime_hr(db, id=id, current=current_user)
 
 @router.get("/overtime", response_model= List[schemas.Leave], status_code=200)
 def hr_all_overtime( db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):

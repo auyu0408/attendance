@@ -24,6 +24,6 @@ def all_dayoff(db: Session=Depends(get_db), current_user: User=Depends(get_curre
 def add_dayoff(date_form: schemas.DayOffCreate, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.create_dayoff(db, date=date_form, current=current_user)
 
-@router.delete("/day_off/{id}",status_code=200)
+@router.delete("/day_off/{id}",status_code=204)
 def delete_dayoff(id:int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.delete_dayoff(db, date_id=id, current=current_user)
