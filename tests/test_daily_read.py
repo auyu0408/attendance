@@ -17,7 +17,7 @@ app.dependency_overrides[login] = override_dependency
 
 officer = {"accept": "application/json", "Authorization": "Bearer officer1", "Content-Type": "application/json"}
 admin = {"accept": "application/json", "Authorization": "Bearer admin", "Content-Type": "application/json"}
-manager = admin = {"accept": "application/json", "Authorization": "Bearer manager", "Content-Type": "application/json"}
+manager = {"accept": "application/json", "Authorization": "Bearer manager1", "Content-Type": "application/json"}
 
 def test_get_daily_admin():
     response = client.get("/hr/daily/1", headers=admin)
@@ -34,10 +34,12 @@ def test_gets_daily_admin():
     assert response.status_code == 200
     print(response.json())
 
-def test_gets_daily_officer():
+def test_gets_daily_officer_hr():
     response = client.get("/hr/daily", headers=officer)
-    assert response.status_code == 200
-    print(response.json())
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail" : "You are not hr."
+    }
 
 def test_get_daily_notfound():
     response = client.get("/hr/daily/20", headers=admin)

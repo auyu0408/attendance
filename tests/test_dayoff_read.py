@@ -43,8 +43,8 @@ def test_dayoff_gets_staff():
     }
 
 def test_dayoff_get_notfound():
-    response = client.get("/hr/day_off/20", headers=officer)
-    assert response.status_code == 401
+    response = client.get("/hr/day_off/20", headers=admin)
+    assert response.status_code == 404
     assert response.json() == {
         "detail": "DayOff not found."
     }

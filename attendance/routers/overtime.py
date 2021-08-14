@@ -13,11 +13,11 @@ router = APIRouter()
 
 #LEAVE
 #self
-@router.get("/overtime", response_model=List[schemas.Leave], status_code=200)
+@router.get("/overtime", response_model=List[schemas.Overtime], status_code=200)
 def overtime_list(db: Session = Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_overtimes(db, user_id=current_user.id)
 
-@router.get("/overtime/{id}", response_model= schemas.Leave, status_code=200)
+@router.get("/overtime/{id}", response_model= schemas.Overtime, status_code=200)
 def read_overtime(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_overtime(db, id=id, current=current_user)
 
@@ -30,14 +30,14 @@ def update_overtime(id: int, overtime_from: schemas.OvertimeCreate, db: Session=
     return crud.update_overtime(db, Overtime=overtime_from, current=current_user, id=id)
 
 #manager
-@router.get("/check_overtime", response_model=List[schemas.Leave], status_code=200)
+@router.get("/check_overtime", status_code=200)
 def check_overtime_list(db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_other_overtimes(db, current=current_user)
 
-@router.get("/check_overtime/{id}", response_model=List[schemas.Leave], status_code=200)
+@router.get("/check_overtime/{id}", status_code=200)
 def check_overtime_read(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
     return crud.get_overtime_manager(db, current=current_user, id=id)
 
-@router.put("/check_overtime/{id}", response_model=schemas.Leave, status_code=200)
+@router.put("/check_overtime/{id}", response_model=schemas.Overtime, status_code=200)
 def check_overtime(id: int, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
-    return crud.check_overtime(db, overtime_id=id, current=current_user)
+    return crud.check_overtime(db, id=id, current=current_user)

@@ -30,16 +30,23 @@ def test_check_leave_notmanager():
 
 def test_check_leave_notfound():
     response = client.put("/check_leave/7", headers=manager)
-    assert response.status_code == 404
+    assert response.status_code == 401
     assert response.json() == {
-        "detail": "Leave not found."
+        "detail": "Permission denied."
     }
 
-def test_check_leave_manager():
+def test_check_leave_boss_staff():
     response = client.put("/check_leave/1", headers=boss)
     assert response.status_code == 401
     assert response.json() == {
-        "detail": "Different Department."
+        "detail": "Permission denied."
+    }
+
+def test_check_leave_manager2_staff():
+    response = client.put("/check_leave/1", headers=hr_manager)
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Permission denied."
     }
 
 def test_check_leave_officer():
