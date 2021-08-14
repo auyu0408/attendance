@@ -17,14 +17,6 @@ def authenticate_user(db:Session, account: str, passwd:str):
     else:
         raise HTTPException(status_code=400, detail="Wrong password.")  
 
-def get_user(db:Session, user_id: int, current: models.User):
-    if not current.hr:
-        raise HTTPException(status_code=401, detail="You are not a hr.")
-    db_user = db.query(models.User).filter(models.User.id==user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found.")
-    return db_user
-
 def get_user_account(db:Session, user_account: str):
     db_user = db.query(models.User).filter(models.User.account==user_account, models.User.status==0).first()
     if not db_user:
@@ -49,6 +41,14 @@ def get_users(db: Session, current: models.User, skip: int=0, limit: int=100):
     if not current.hr:
         raise HTTPException(status_code=401, detail="You are not hr.")
     return db.query(models.User).offset(skip).limit(limit).all()
+
+def get_user(db:Session, user_id: int, current: models.User):
+    if not current.hr:
+        raise HTTPException(status_code=401, detail="You are not a hr.")
+    db_user = db.query(models.User).filter(models.User.id==user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found.")
+    return db_user
 
 def create_user(db:Session, user:schemas.UserCreate, current: models.User):
     if not current.hr:

@@ -34,6 +34,21 @@ def test_create_daily_admin():
     assert response.status_code == 201
     print(response.json())
 
+def test_create_daily_success():
+    daily = {
+        'day': '2021-08-11',
+        'on': '08:00',
+        'off': '08:00',
+        'on_fix': '08:00',
+        'off_fix': '08:00',
+        'fix_note': '他會成功',
+        'user_id': 2
+    }
+    daily_json = json.dumps(daily)
+    response = client.post("/hr/daily", data=daily_json, headers=admin)
+    assert response.status_code == 201
+    print(response.json())
+
 def test_create_daily_staff():
     daily = {
         'day': '2021-08-10',

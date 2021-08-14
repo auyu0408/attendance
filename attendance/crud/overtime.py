@@ -53,37 +53,41 @@ def update_overtime(db:Session, Overtime: schemas.OvertimeCreate, current: model
     db.commit()
     return db_overtime
 
-#utility
 def get_overtime(db:Session, id: int, current: models.User):
     db_overtime = db.query(models.Overtime).filter(models.Overtime.id == id).first()
     if not db_overtime:
         raise HTTPException(status_code=404, detail="Overtime not found.")
-    if db_overtime.user_id != current.id and not current.hr:
+    if db_overtime.user_id != current.id:
         raise HTTPException(status_code=401, detail="Wrong User.")
+    return db_overtime
 
 def get_overtimes(db:Session, user_id: int):
-    return db.query(models.Overtime).filter(models.Overtime.user_id==user_id)
+    return db.query(models.Overtime).filter(models.Overtime.user_id==user_id).all()
 
 #manager
 def get_other_overtimes(db:Session, current: models.User, skip:int=0, limit: int=100):
     if not current.manager:
         raise HTTPException(status_code=401, detail="You are not a manager.")
     if current.department == "Boss":
-        return db.query(models.Overtime).offset(skip).limit(limit).filter(models.Overtime.user_id.manager==True)
+        return db.query(models.Overtime).join(models.User).filter(models.User.manager == True).offset(skip).limit(limit).all()
     else:
-        return db.query(models.Overtime).offset(skip).limit(limit).filter(models.Overtime.user_id.department==current.department)
+        return db.query(models.Overtime).join(models.User).filter(models.User.department == current.department, models.User.id != current.id).offset(skip).limit(limit).all()
 
-def check_overtime(db:Session, overtime_id: int, current: models.User):
+def get_overtime_manager(db:Session, id: int, current: models.User):
     if not current.manager:
         raise HTTPException(status_code=401, detail="You are not a manager.")
-    db_overtime = db.query(models.Overtime).filter(models.Overtime.id == overtime_id).first()
+    if current.department == "Boss":
+        db_overtime = db.query(models.Overtime).join(models.User).filter(models.User.manager == True, models.Overtime.id == id).first()
+    else:
+        db_overtime = db.query(models.Overtime).join(models.User).filter(models.User.department == current.department, models.User.id != current.id, models.Overtime.id == id).first()
     if not db_overtime:
-        raise HTTPException(status_code=404, detail="Leave not found.")
-    db_user = db.query(models.User).filter(models.User.id==db_overtime.user_id).first()
-    if db_user.department != current.department:
-        raise HTTPException(status_code=403, detail="Different Department.")
-    if db_user.manager and current.department != "Boss":
-        raise HTTPException(status_code=403, detail="Not enough limit.")
+        raise HTTPException(status_code=401, detail="Permission denied.")
+    return db_overtime
+
+def check_overtime(db:Session, id: int, current: models.User):
+    if not current.manager:
+        raise HTTPException(status_code=401, detail="You are not a manager.")
+    db_overtime = get_overtime_manager(db, id=id, current=current)
     db_overtime.check=True
     db.commit()
     return db_overtime
@@ -93,3 +97,11 @@ def all_overtime(db:Session, current: models.User, skip: int=0, limit: int=100):
     if not current.hr:
         raise HTTPException(status_code=401, detail="You are not hr.")
     return db.query(models.Overtime).offset(skip).limit(limit).filter(models.Overtime.check==True)
+
+def get_overtime_hr(db:Session, id: int, current: models.User):
+    if not current.hr:
+        raise HTTPException(status_code=401, detail="You are not hr.")
+    db_overtime = db.query(models.Overtime).filter(models.Overtime.id == id, models.Overtime.check == True).first()
+    if not db_overtime:
+        raise HTTPException(status_code=404, detail="Overtime not found.")
+    return db_overtime

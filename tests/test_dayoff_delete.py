@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from attendance.main import app, login
 from attendance import crud
 from attendance.database import get_db
-import json
 
 client = TestClient(app)
 
@@ -16,16 +15,23 @@ async def override_dependency(form_data: OAuth2PasswordRequestForm= Depends(), d
 
 app.dependency_overrides[login] = override_dependency
 
-officer = {"accept": "application/json", "Authorization": "Bearer officer1", "Content-Type": "application/json"}
 admin = {"accept": "application/json", "Authorization": "Bearer admin", "Content-Type": "application/json"}
+officer = {"accept": "application/json", "Authorization": "Bearer officer1", "Content-Type": "application/json"}
 
-def test_create_daily_admin():
-    daily = {
-        'on_fix': '08:00',
-        'off_fix': '17:00',
-        'fix_note': '他會成功',
+def test_dayoff_delete_success():
+    response = client.delete("/hr/day_off/5", headers=admin)
+    assert response.status_code == 204
+
+def test_dayoff_delete_notfound():
+    response = client.delete("/hr/day_off/24", headers=admin)
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "Object not found"
     }
-    daily_json = json.dumps(daily)
-    response = client.put("/hr/daily/{1}", data=daily_json, headers=admin)
-    assert response.status_code == 201
-    print(response.json())
+
+def test_dayoff_delete_staff():
+    response = client.delete("/hr/day_off/2", headers=officer)
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "You are not hr."
+    }

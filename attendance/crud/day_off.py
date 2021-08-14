@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, Response
 
 from attendance import models, schemas
 #hr
@@ -31,11 +31,11 @@ def create_dayoff(db:Session, date:schemas.DayOffCreate, current: models.User):
 
 def delete_dayoff(db:Session, date_id: int, current: models.User):
     if not current.hr:
-        raise HTTPException(stauts_code=401, detail="You are not hr.")
+        raise HTTPException(status_code=401, detail="You are not hr.")
     db_dayoff = db.query(models.DayOff).filter(models.DayOff.id == date_id).first()
     if db_dayoff:
         db.delete(db_dayoff)
         db.commit()
     else: 
         raise HTTPException(status_code=404, detail="Object not found")
-    return all_dayoff(db, current=current)
+    return Response(status_code=204)
