@@ -13,6 +13,7 @@ sqlalchemy = "*"
 python-multipart = "*"
 python-jose = "*"
 alembic = "*"
+pytest = "*"
 
 [dev-packages]
 

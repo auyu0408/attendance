@@ -4,7 +4,7 @@ init: clean
 	pipenv install --dev
 
 start: clean
-	alembic upgrade head
+	pipenv run alembic upgrade head
 	mv attendance.db attendance/attendance.db
 	pipenv run python setup.py
 

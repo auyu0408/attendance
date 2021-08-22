@@ -45,6 +45,8 @@ make clean
 Using `pytest` in fastapi.  
 
 ```lan=bash
+pipenv shell
+pip install requests
 make test
 ```
 
